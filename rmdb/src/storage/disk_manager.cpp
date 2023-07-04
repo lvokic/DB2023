@@ -14,7 +14,6 @@ See the Mulan PSL v2 for more details. */
 #include <string.h>    // for memset
 #include <sys/stat.h>  // for stat
 #include <unistd.h>    // for lseek
-#include <unordered_set>  // for std::unordered_set
 
 #include "defs.h"
 
@@ -113,10 +112,13 @@ bool DiskManager::is_file(const std::string &path) {
 void DiskManager::create_file(const std::string &path) {
     // Todo:
     // 调用open()函数，使用O_CREAT模式
+    if(is_file(path))
+        throw FileExistsError(path);
     int fd = open(path.c_str(), O_WRONLY | O_CREAT | O_EXCL);
     if(fd == -1){
-        throw FileExistsError(path.c_str());
+        throw UnixError();
     }
+    close(fd);
     // 注意不能重复创建相同文件
 }
 
@@ -127,8 +129,12 @@ void DiskManager::create_file(const std::string &path) {
 void DiskManager::destroy_file(const std::string &path) {
     // Todo:
     // 调用unlink()函数
+    if(!is_file(path))
+        throw FileNotFoundError(path);
+    if(path2fd_.find(path) != path2fd_.end())
+        throw FileNotClosedError(path);
     if(unlink(path.c_str()) == -1){
-        throw FileNotClosedError(path.c_str());
+        throw UnixError();
     }
     // 注意不能删除未关闭的文件
 }
@@ -142,17 +148,17 @@ void DiskManager::destroy_file(const std::string &path) {
 int DiskManager::open_file(const std::string &path) {
     // Todo:
     // 调用open()函数，使用O_RDWR模式
-    static std::unordered_set<std::string> opened_files;
-    if(opened_files.count(path) > 0){
-        throw FileNotClosedError(path.c_str());
-    }
-    
+    if(!is_file(path))
+        throw FileNotFoundError(path);
+    if(path2fd_.find(path) != path2fd_.end())
+        throw FileNotClosedError(path);
     int fd = open(path.c_str(), O_RDWR);
     if(fd == -1){
-        throw FileNotOpenError(fd);
+        throw UnixError();
     }   
     // 更新文件打开列表
-    opened_files.insert(path);
+    path2fd_.insert(std::make_pair(path, fd));
+    fd2path_.insert(std::make_pair(fd, path));
     return fd;
     // 注意不能重复打开相同文件，并且需要更新文件打开列表
 
@@ -165,11 +171,13 @@ int DiskManager::open_file(const std::string &path) {
 void DiskManager::close_file(int fd) {
     // Todo:
     // 调用close()函数
-    static std::unordered_set<std::string> opened_files;
+    if(fd2path_.find(fd) == fd2path_.end())
+        throw FileNotOpenError(fd);
     if(close(fd) == -1){
-        throw FileNotClosedError(get_file_name(fd));
+        throw UnixError();
     }
-    opened_files.erase(get_file_name(fd));
+    path2fd_.erase(fd2path_[fd]);
+    fd2path_.erase(fd);
     // 注意不能关闭未打开的文件，并且需要更新文件打开列表
 }
 
