@@ -25,6 +25,7 @@ class Bitmap {
     static void set(char *bm, int pos) { bm[get_bucket(pos)] |= get_bit(pos); }
 
     // pos位 置0
+    /* ~取反码 */
     static void reset(char *bm, int pos) { bm[get_bucket(pos)] &= static_cast<char>(~get_bit(pos)); }
 
     // 如果pos位是1，则返回true
@@ -55,7 +56,13 @@ class Bitmap {
     // rid_.slot_no); int slot_no = Bitmap::first_bit(false, page_handle.bitmap, file_hdr_.num_records_per_page);
 
    private:
+    /// @brief 计算pos位置的索引
+    /// @param pos 
+    /// @return 
     static int get_bucket(int pos) { return pos / BITMAP_WIDTH; }
 
+    /// @brief 计算pos位置的位掩码
+    /// @param pos 
+    /// @return 
     static char get_bit(int pos) { return BITMAP_HIGHEST_BIT >> static_cast<char>(pos % BITMAP_WIDTH); }
 };

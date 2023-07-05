@@ -120,3 +120,33 @@
 > 该模板函数的作用是使得可以直接使用输出流插入操作符 `<<` 来输出枚举类型的值。通过将枚举值转换为整数类型，可以将其输出到流中，以便进行显示或存储。
 
 latest：make -j4运行，代码编写完成前无法正常运行
+
+
+
+## RECORD
+
+#### Bitmap(位图)
+
+> 
+
+#### Rm_file_handle
+
+> ```c++
+> struct RmPageHandle {
+>     const RmFileHdr *file_hdr;  // 当前页面所在文件的文件头指针
+>     Page *page;                 // 页面的实际数据，包括页面存储的数据、元信息等
+>     RmPageHdr *page_hdr;        // page->data的第一部分，存储页面元信息，指针指向首地址，长度为sizeof(RmPageHdr)
+>     char *bitmap;               // page->data的第二部分，存储页面的bitmap，指针指向首地址，长度为file_hdr->bitmap_size
+>     char *slots;                // page->data的第三部分，存储表的记录，指针指向首地址，每个slot的长度为file_hdr->record_size
+> RmPageHandle(const RmFileHdr *fhdr_, Page *page_) : file_hdr(fhdr_), page(page_) {
+>     page_hdr = reinterpret_cast<RmPageHdr *>(page->get_data() + page->OFFSET_PAGE_HDR);
+>     bitmap = page->get_data() + sizeof(RmPageHdr) + page->OFFSET_PAGE_HDR;
+>     slots = bitmap + file_hdr->bitmap_size;
+> }
+> 
+> 	// 返回指定slot_no的slot存储收地址
+> char* get_slot(int slot_no) const {
+>     return slots + slot_no * file_hdr->record_size;  // slots的首地址 + slot个数 * 每个slot的大小(每个record的大小)
+> 	}
+> };
+> ```
