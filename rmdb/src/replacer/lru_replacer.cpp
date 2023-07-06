@@ -65,6 +65,7 @@ void LRUReplacer::unpin(frame_id_t frame_id) {
         std::list<frame_id_t>::iterator iter = LRUlist_.begin();
         LRUhash_.insert(std::make_pair(frame_id, iter));
     }
+    latch_.unlock();
 }
 
 /**

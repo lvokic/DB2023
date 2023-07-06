@@ -559,8 +559,6 @@ src/recovery/CMakeFiles/recoverys.dir/log_recovery.cpp.o: ../src/recovery/log_re
   /usr/include/c++/11/bits/this_thread_sleep.h \
   /usr/include/c++/11/unordered_set \
   /usr/include/c++/11/bits/unordered_set.h \
-  ../src/transaction/txn_defs.h \
-  ../src/index/ix_manager.h \
   /usr/include/c++/11/memory \
   /usr/include/c++/11/bits/stl_tempbuf.h \
   /usr/include/c++/11/bits/stl_raw_storage_iter.h \
@@ -573,6 +571,8 @@ src/recovery/CMakeFiles/recoverys.dir/log_recovery.cpp.o: ../src/recovery/log_re
   /usr/include/c++/11/backward/auto_ptr.h \
   /usr/include/c++/11/pstl/glue_memory_defs.h \
   /usr/include/c++/11/pstl/execution_defs.h \
+  ../src/transaction/txn_defs.h \
+  ../src/index/ix_manager.h \
   ../src/system/sm_meta.h \
   /usr/include/c++/11/algorithm \
   /usr/include/c++/11/bits/stl_algo.h \
@@ -597,6 +597,8 @@ src/recovery/CMakeFiles/recoverys.dir/log_recovery.cpp.o: ../src/recovery/log_re
 ../src/record/bitmap.h:
 
 /usr/include/c++/11/algorithm:
+
+../src/index/ix_manager.h:
 
 /usr/include/c++/11/bits/algorithmfwd.h:
 
@@ -623,8 +625,6 @@ src/recovery/CMakeFiles/recoverys.dir/log_recovery.cpp.o: ../src/recovery/log_re
 /usr/include/c++/11/bits/stl_tempbuf.h:
 
 /usr/include/c++/11/memory:
-
-../src/index/ix_manager.h:
 
 /usr/include/c++/11/bits/unordered_set.h:
 
